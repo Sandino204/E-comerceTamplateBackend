@@ -26,6 +26,7 @@ module.exports = (req, res, next) => {
         })
         .then((data) => {
             req.client.cpf = data.docs[0].data().CPFCNPJ
+            req.client.admin = data.docs[0].data().admin
             return next()
         })
         .catch((err) => {

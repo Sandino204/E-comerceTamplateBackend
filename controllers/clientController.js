@@ -20,6 +20,7 @@ clientController.signUp = (req, res) => {
         email: req.body.email,
         password: req.body.password,
         password2: req.body.password2,
+        admin: false
     }
 
     const errors = []
@@ -247,26 +248,36 @@ clientController.editClientAdressData = (req, res) => {
 //editing control of phone data
 clientController.editClientPhonesData = (req, res) => {
 
-    const phones = {
-        phones: {
-            phone: req.body.phone ? req.body.phone : null,
-            DDD: req.body.ddd ? req.body.ddd : null,
-            country: req.body.country ? req.body.country : null, 
-            phone2: req.body.phone2 ? req.body.phone2 : null, 
-            DDD2: req.body.ddd2 ? req.body.ddd2 : null, 
-            country2: req.body.country2 ? req.body.country2 : null
-        }
-    }
-
     const document = db.collection("clients").doc(req.client.cpf)
 
+    document.get()
+        .then((doc) => {
+            const phones = {
+                phones: {
+                    phone: req.body.phone ? req.body.phone : (doc.data().phones.phone ? doc.data().phones.phone : null),
+                    DDD: req.body.ddd ? req.body.ddd : (doc.data().phones.ddd ? doc.data().phones.ddd : null),
+                    country: req.body.country ? req.body.country : (doc.data().phones.country ? doc.data().phones.country : null), 
+                    phone2: req.body.phone2 ? req.body.phone2 : (doc.data().phones.phone2 ? doc.data().phones.phone2 : null), 
+                    DDD2: req.body.ddd2 ? req.body.ddd2 : (doc.data().phones.ddd2 ? doc.data().phones.ddd2 : null), 
+                    country2: req.body.country2 ? req.body.country2 : (doc.data().phones.country2 ? doc.data().phones.country2 : null)
+                }
+            }
 
-    document.update(phones)
-        .then(() => {
-            res.status(200).json({
-                success: true, 
-                message: 'Update Phones successfully'
+            
+            document.update(phones)
+            .then(() => {
+                res.status(200).json({
+                    success: true, 
+                    message: 'Update Phones successfully'
+                })
             })
+            .catch((err) => {
+                return res.status(500).json({
+                    success: false, 
+                    message: "Cant update the value"
+                })
+            })
+
         })
         .catch((err) => {
             return res.status(500).json({
@@ -274,47 +285,63 @@ clientController.editClientPhonesData = (req, res) => {
                 message: "Cant update the value"
             })
         })
+        
 
 }
 
 //payment card edition control
 clientController.editClientPaymentCards = (req, res) => {
     
-    const paymentCards = {
-
-        paymentCards: {
-            
-            cardName: req.body.cardName ? req.body.cardName : null,
-            cardNumber: req.body.cardNumber ? req.body.cardNumber : null, 
-            expiryDate: req.body.expiryDate ? req.body.expiryDate : null,
-            
-            cardName2: req.body.cardName2 ? req.body.cardName2 : null,
-            cardNumber2: req.body.cardNumber2 ? req.body.cardNumber2 : null, 
-            expiryDate2: req.body.expiryDate2 ? req.body.expiryDate2 : null, 
-            
-            cardName3: req.body.cardName3 ? req.body.cardName3 : null,
-            cardNumber3: req.body.cardNumber3 ? req.body.cardNumber3 : null, 
-            expiryDate3: req.body.expiryDate3 ? req.body.expiryDate3 : null, 
-        
-            cardName4: req.body.cardName4 ? req.body.cardName4 : null,
-            cardNumber4: req.body.cardNumber4 ? req.body.cardNumber4 : null, 
-            expiryDate4: req.body.expiryDate4 ? req.body.expiryDate4 : null, 
-        
-            cardName5: req.body.cardName5 ? req.body.cardName5 : null,
-            cardNumber5: req.body.cardNumber5 ? req.body.cardNumber5 : null, 
-            expiryDate5: req.body.expiryDate5 ? req.body.expiryDate5 : null, 
-
-        }
-    }
 
     const document = db.collection("clients").doc(req.client.cpf)
 
-    document.update(paymentCards)
-        .then(() => {
-            res.status(200).json({
-                success: true, 
-                message: 'Update payment Cards successfully'
+    document.get()
+        .then((doc) => {
+            const paymentCards = {
+
+                paymentCards: {
+                    
+                    cardName: req.body.cardName ? req.body.cardName : 
+                        (doc.data().paymentCards.cardName ? doc.data().paymentCards.cardName : null),
+                    cardNumber: req.body.cardNumber ? req.body.cardNumber : (doc.data().paymentCards.cardNumber ? 
+                        doc.data().paymentCards.cardNumber : null), 
+                    expiryDate: req.body.expiryDate ? req.body.expiryDate : (doc.data().paymentCards.expiryDate ?
+                        doc.data().paymentCards.expiryDate : null),
+                     
+                    
+                    cardName2: req.body.cardName2 ? req.body.cardName2 : 
+                        (doc.data().paymentCards.cardName2 ? doc.data().paymentCards.cardName2 : null),
+                    cardNumber: req.body.cardNumber2 ? req.body.cardNumber2 : (doc.data().paymentCards.cardNumber2 ? 
+                        doc.data().paymentCards.cardNumber2 : null), 
+                    expiryDate: req.body.expiryDate2 ? req.body.expiryDate2 : (doc.data().paymentCards.expiryDate2 ?
+                        doc.data().paymentCards.expiryDate2 : null),
+                        
+                    
+                    cardName3: req.body.cardName3 ? req.body.cardName3 : 
+                        (doc.data().paymentCards.cardName3 ? doc.data().paymentCards.cardName3 : null),
+                    cardNumber: req.body.cardNumber3 ? req.body.cardNumber3 : (doc.data().paymentCards.cardNumber3 ? 
+                        doc.data().paymentCards.cardNumber3 : null), 
+                    expiryDate: req.body.expiryDate3 ? req.body.expiryDate3 : (doc.data().paymentCards.expiryDate3 ?
+                        doc.data().paymentCards.expiryDate3 : null),
+        
+                }
+            }
+
+            document.update(paymentCards)
+            .then(() => {
+                res.status(200).json({
+                    success: true, 
+                    message: 'Update payment Cards successfully'
+                })
             })
+            .catch((err) => {
+                return res.status(500).json({
+                    success: false, 
+                    message: "Cant update the value"
+                })
+            })
+
+
         })
         .catch((err) => {
             return res.status(500).json({
@@ -322,6 +349,7 @@ clientController.editClientPaymentCards = (req, res) => {
                 message: "Cant update the value"
             })
         })
+
 }
 
 
